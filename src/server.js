@@ -49,8 +49,6 @@ rimraf("src/public/*.png", () => {
 
 // Smoke test model - logistic regression
 
-
-
 // Web server logic
 
 const app = express();
