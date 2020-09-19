@@ -9,6 +9,8 @@ const rimraf = require("rimraf");
 
 const { train: trainLinear, test: testLinear } = require("./linear-regression");
 
+// Load dataset
+
 let { features, labels, testFeatures, testLabels, mean, variance } = loadCsv(
   "./data/cars.csv",
   {
@@ -23,20 +25,20 @@ let { features, labels, testFeatures, testLabels, mean, variance } = loadCsv(
 
 // MPG model - linear regression
 
-const { weights, mseHistory } = trainLinear(features, labels, {
+const mpg = trainLinear(features, labels, {
   learningRate: 0.1,
   iterations: 100,
   batchSize: 10
 });
 
-const r2 = testLinear(weights, testFeatures, testLabels);
+const r2 = testLinear(mpg.weights, testFeatures, testLabels);
 
 console.log("mpg r2 is", r2);
 
 const timestamp = Date.now();
 
 plot({
-  x: mseHistory,
+  x: mpg.mseHistory,
   xLabel: "Iteration #",
   yLabel: "Mean Squared Error"
 });
@@ -44,6 +46,8 @@ plot({
 rimraf("src/public/*.png", () => {
   fs.rename("plot.png", `src/public/mpg-mse-${timestamp}.png`, () => {});
 });
+
+// Smoke test model - logistic regression
 
 // Web server logic
 
@@ -58,10 +62,12 @@ app.get("/", (request, response) => {
 app.get("/model", (request, response) => {
   response.json({
     timestamp,
-    weights: weights.arraySync(),
     mean: mean.arraySync(),
     variance: variance.arraySync(),
-    r2
+    mpg: {
+      weights: mpg.weights.arraySync(),
+      r2
+    }
   });
 });
 
