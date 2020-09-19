@@ -1,10 +1,10 @@
 fetch("/model")
   .then(response => response.json())
   .then(responseJson => {
-    const { timestamp, weights, mean, variance, r2 } = responseJson;
+    const { timestamp, mean, variance, mpg } = responseJson;
 
     const accuracyElement = document.querySelector("#mpg-accuracy");
-    accuracyElement.innerHTML = `${(r2 * 100).toFixed(2)}`;
+    accuracyElement.innerHTML = `${(mpg.r2 * 100).toFixed(2)}`;
 
     const msePlotElement = document.querySelector("#mpg-mse-plot");
     msePlotElement.src = `mpg-mse-${timestamp}.png`;
@@ -15,7 +15,7 @@ fetch("/model")
     const resultElement = document.querySelector("#result");
 
     const calculateMpg = () => {
-      let mpg = weights.reduce(
+      let result = mpg.weights.reduce(
         (acc, weight, i) =>
           acc +
           weight *
@@ -25,7 +25,7 @@ fetch("/model")
                 Math.sqrt(variance[i - 1])),
         0
       );
-      resultElement.innerHTML = `${mpg.toFixed(2)}`;
+      resultElement.innerHTML = `${result.toFixed(2)}`;
     };
 
     inputs.forEach(input => input.addEventListener("change", calculateMpg));
