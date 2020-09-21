@@ -1,13 +1,13 @@
 fetch("/model")
   .then(response => response.json())
   .then(responseJson => {
-    const { timestamp, mean, variance, mpg } = responseJson;
+    const { mean, variance, mpg } = responseJson;
 
     const accuracyElement = document.querySelector("#mpg-accuracy");
     accuracyElement.innerHTML = `${(mpg.r2 * 100).toFixed(2)}`;
 
     const msePlotElement = document.querySelector("#mpg-mse-plot");
-    msePlotElement.src = `mpg-mse-${timestamp}.png`;
+    msePlotElement.src = `mpg-mse-${mpg.timestamp}.png`;
 
     const inputs = ["#displacement", "#horsepower", "#weight"].map(query =>
       document.querySelector(query)
