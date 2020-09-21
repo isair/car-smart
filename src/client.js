@@ -1,7 +1,19 @@
+const tf = require("@tensorflow/tfjs");
+
+const { predict: predictLinear } = require("./algorithms/linear-regression");
+
+const deserializeModelResult = require("./utils/deserializeModelResult");
+
 fetch("/model?name=mpg")
   .then(response => response.json())
   .then(responseJson => {
-    const { mean, variance, weights, r2, msePlotImageUrl } = responseJson;
+    const {
+      mean,
+      variance,
+      weights,
+      r2,
+      msePlotImageUrl
+    } = deserializeModelResult(responseJson);
 
     const accuracyElement = document.querySelector("#mpg-accuracy");
     accuracyElement.innerHTML = `${(r2 * 100).toFixed(2)}`;
@@ -15,17 +27,15 @@ fetch("/model?name=mpg")
     const resultElement = document.querySelector("#result");
 
     const calculateMpg = () => {
-      let result = weights.reduce(
-        (acc, weight, i) =>
-          acc +
-          weight *
-            (i === 0
-              ? 1
-              : ((Number(inputs[i - 1].value) || 0) - mean[i - 1]) /
-                Math.sqrt(variance[i - 1])),
-        0
+      const predictions = predictLinear(
+        tf.tensor([inputs.map(input => Number(input.value))]),
+        weights,
+        mean,
+        variance
       );
-      resultElement.innerHTML = `${result.toFixed(2)}`;
+      resultElement.innerHTML = `${Number(predictions.arraySync()[0]).toFixed(
+        2
+      )}`;
     };
 
     inputs.forEach(input => input.addEventListener("change", calculateMpg));

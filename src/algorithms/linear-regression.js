@@ -74,7 +74,14 @@ const test = (weights, testFeatures, testLabels) => {
   return 1 - residual / total;
 };
 
+const predict = (observations, weights, mean, variance) =>
+  tf
+    .ones([observations.shape[0], 1])
+    .concat(observations.sub(mean).div(variance.pow(0.5)), 1)
+    .matMul(weights);
+
 module.exports = {
   train,
-  test
+  test,
+  predict
 };
