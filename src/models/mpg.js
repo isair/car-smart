@@ -4,16 +4,13 @@ const plot = require("node-remote-plot");
 const fs = require("fs");
 const rimraf = require("rimraf");
 
-const {
-  train: trainLinear,
-  test: testLinear
-} = require("../algorithms/linear-regression");
+const { train, test } = require("../algorithms/linear-regression");
 
 const run = () => {
   let { features, labels, testFeatures, testLabels, mean, variance } = loadCsv(
     "./data/cars.csv",
     {
-      featureColumns: ["horsepower", "weight", "displacement"],
+      featureColumns: ["displacement", "horsepower", "weight"],
       labelColumns: ["mpg"],
       shuffle: true,
       splitTest: 50,
@@ -22,18 +19,18 @@ const run = () => {
     }
   );
 
-  const mpg = trainLinear(features, labels, {
+  const { weights, mseHistory } = train(features, labels, {
     learningRate: 0.1,
     iterations: 100,
     batchSize: 10
   });
 
-  const r2 = testLinear(mpg.weights, testFeatures, testLabels);
+  const r2 = test(weights, testFeatures, testLabels);
 
   console.log("mpg r2 is", r2);
 
   plot({
-    x: mpg.mseHistory,
+    x: mseHistory,
     xLabel: "Iteration #",
     yLabel: "Mean Squared Error"
   });
@@ -47,9 +44,9 @@ const run = () => {
   return {
     mean,
     variance,
-    weights: mpg.weights,
+    weights,
     r2,
-    msePlotImageUrl: msePlotImageName
+    plotImageUrl: msePlotImageName
   };
 };
 

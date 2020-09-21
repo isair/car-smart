@@ -65,7 +65,7 @@ const train = (
 };
 
 const test = (weights, testFeatures, testLabels) => {
-  const predictions = testFeatures.matMul(weights);
+  const predictions = testFeatures.matMul(weights).sigmoid();
   const residual = testLabels
     .sub(predictions)
     .pow(2)

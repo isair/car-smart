@@ -12,14 +12,14 @@ fetch("/model?name=mpg")
       variance,
       weights,
       r2,
-      msePlotImageUrl
+      plotImageUrl
     } = deserializeModelResult(responseJson);
 
     const accuracyElement = document.querySelector("#mpg-accuracy");
     accuracyElement.innerHTML = `${(r2 * 100).toFixed(2)}`;
 
     const msePlotElement = document.querySelector("#mpg-mse-plot");
-    msePlotElement.src = msePlotImageUrl;
+    msePlotElement.src = plotImageUrl;
 
     const inputs = ["#displacement", "#horsepower", "#weight"].map(query =>
       document.querySelector(query)

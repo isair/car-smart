@@ -4,16 +4,13 @@ const plot = require("node-remote-plot");
 const fs = require("fs");
 const rimraf = require("rimraf");
 
-const {
-  train: trainLinear,
-  test: testLinear
-} = require("../algorithms/linear-regression");
+const { train, test, predict } = require("../algorithms/logistic-regression");
 
 const run = () => {
   let { features, labels, testFeatures, testLabels, mean, variance } = loadCsv(
     "./data/cars.csv",
     {
-      featureColumns: ["horsepower", "weight", "displacement"],
+      featureColumns: ["displacement", "horsepower", "weight"],
       labelColumns: ["passedemissions"],
       mappings: {
         passedemissions: value => (value === "TRUE" ? 1 : 0)
@@ -25,12 +22,27 @@ const run = () => {
     }
   );
 
+  const { weights } = train(features, labels, {
+    learningRate: 0.5,
+    iterations: 100,
+    batchSize: 50
+  });
+
+  const predictions = predict(
+    tf.tensor([[307, 130, 1.75]]),
+    weights,
+    mean,
+    variance
+  );
+
+  predictions.print();
+
   return {
     mean,
     variance,
-    weights: tf.tensor([]),
+    weights,
     r2: 0,
-    msePlotImageUrl: ""
+    plotImageUrl: ""
   };
 };
 
