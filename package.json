@@ -1,18 +1,18 @@
 {
-  "name": "mpg-ml",
+  "name": "car-smart",
   "version": "0.0.1",
   "description": "",
-  "main": "src/server.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node src/index.js"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "@tensorflow/tfjs-node": "^2.3.0",
-    "@tensorflow/tfjs": "^2.2.0",
+    "@tensorflow/tfjs-node": "^2.4.0",
+    "@tensorflow/tfjs": "^2.4.0",
     "lodash": "^4.17.20",
     "shuffle-seed": "^1.1.6",
-    "tensorflow-load-csv": "^1.1.1",
+    "tensorflow-load-csv": "^1.2.1",
     "node-remote-plot": "^1.0.1",
     "rimraf": "^3.0.2"
   },
@@ -20,7 +20,7 @@
     "node": "12.x"
   },
   "repository": {
-    "url": "https://glitch.com/edit/#!/reminiscent-coffee-bovid"
+    "url": "https://glitch.com/edit/#!/car-smart"
   },
   "license": "MIT",
   "keywords": [

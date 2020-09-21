@@ -1,76 +1,38 @@
-require("@tensorflow/tfjs-node");
-
 const express = require("express");
-const tf = require("@tensorflow/tfjs");
-const loadCsv = require("tensorflow-load-csv");
-const plot = require("node-remote-plot");
-const fs = require("fs");
-const rimraf = require("rimraf");
 
-const { train: trainLinear, test: testLinear } = require("./linear-regression");
+const serializeModelResult = require("./utils/serializeModelResult");
+const mpgModel = require("./models/mpg");
+const emissionsModel = require("./models/passedemissions");
 
-// Load dataset
+const start = () => {
+  // Run models and serialize results.
 
-let { features, labels, testFeatures, testLabels, mean, variance } = loadCsv(
-  "./data/cars.csv",
-  {
-    featureColumns: ["horsepower", "weight", "displacement"],
-    labelColumns: ["mpg"],
-    shuffle: true,
-    splitTest: 50,
-    prependOnes: true,
-    standardise: true
-  }
-);
+  const serializeModel = model => serializeModelResult(model.run());
 
-// MPG model - linear regression
+  const serializedModelResults = {
+    mpg: serializeModel(mpgModel),
+    emissions: serializeModel(emissionsModel)
+  };
 
-const mpg = trainLinear(features, labels, {
-  learningRate: 0.1,
-  iterations: 100,
-  batchSize: 10
-});
+  // Set up and start the web server.
 
-const r2 = testLinear(mpg.weights, testFeatures, testLabels);
+  const app = express();
 
-console.log("mpg r2 is", r2);
+  app.use(express.static(__dirname + "/public"));
 
-const timestamp = Date.now();
-
-plot({
-  x: mpg.mseHistory,
-  xLabel: "Iteration #",
-  yLabel: "Mean Squared Error"
-});
-
-rimraf("src/public/*.png", () => {
-  fs.rename("plot.png", `src/public/mpg-mse-${timestamp}.png`, () => {});
-});
-
-// Smoke test model - logistic regression
-
-// Web server logic
-
-const app = express();
-
-app.use(express.static(__dirname + "/public"));
-
-app.get("/", (request, response) => {
-  response.sendFile(__dirname + "/views/index.html");
-});
-
-app.get("/model", (request, response) => {
-  response.json({
-    timestamp,
-    mean: mean.arraySync(),
-    variance: variance.arraySync(),
-    mpg: {
-      weights: mpg.weights.arraySync(),
-      r2
-    }
+  app.get("/", (request, response) => {
+    response.sendFile(__dirname + "/views/index.html");
   });
-});
 
-const listener = app.listen(process.env.PORT, () => {
-  console.log("Your app is listening on port " + listener.address().port);
-});
+  app.get("/model", (request, response) =>
+    response.json(serializedModelResults[request.query.name || "mpg"])
+  );
+
+  const listener = app.listen(process.env.PORT, () => {
+    console.log("Your app is listening on port " + listener.address().port);
+  });
+};
+
+module.exports = {
+  start
+};
