@@ -34,13 +34,13 @@ const run = () => {
 
   console.log("mpg r2 is", r2);
 
-  const msePlotImageName = `mpg-mse-${Date.now()}.png`;
-
   plot({
     x: mpg.mseHistory,
     xLabel: "Iteration #",
     yLabel: "Mean Squared Error"
   });
+
+  const msePlotImageName = `mpg-mse-${Date.now()}.png`;
 
   rimraf("src/public/*.png", () => {
     fs.rename("plot.png", `src/public/${msePlotImageName}`, () => {});
@@ -50,7 +50,7 @@ const run = () => {
     mean,
     variance,
     weights: mpg.weights,
-    r2: mpg.r2,
+    r2,
     msePlotImageUrl: msePlotImageName
   };
 };

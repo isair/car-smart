@@ -1,7 +1,7 @@
 const express = require("express");
-const mpg = require("./models/mpg");
+const mpgModel = require("./models/mpg");
 
-mpg.run();
+const mpg = mpgModel.run();
 
 const app = express();
 
@@ -20,7 +20,7 @@ app.get("/model", (request, response) => {
         variance: mpg.variance.arraySync(),
         weights: mpg.weights.arraySync(),
         r2: mpg.r2,
-        msePlotImageUrl: mpg.msePlotImageUrl,
+        msePlotImageUrl: mpg.msePlotImageUrl
       });
       break;
   }
