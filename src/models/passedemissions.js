@@ -29,7 +29,7 @@ const run = () => {
   });
 
   const predictions = predict(
-    tf.tensor([[307, 130, 1.75]]),
+    tf.tensor([[97, 88, 1.065]]),
     weights,
     mean,
     variance
