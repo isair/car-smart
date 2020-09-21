@@ -1,5 +1,3 @@
-require("@tensorflow/tfjs-node");
-
 const tf = require("@tensorflow/tfjs");
 const loadCsv = require("tensorflow-load-csv");
 const plot = require("node-remote-plot");
