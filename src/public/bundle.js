@@ -87,15 +87,23 @@ module.exports = {
   predict
 };
 
-},{"@tensorflow/tfjs":9}],2:[function(require,module,exports){
+},{"@tensorflow/tfjs":10}],2:[function(require,module,exports){
 const tf = require("@tensorflow/tfjs");
 
 const { predict: predictLinear } = require("./algorithms/linear-regression");
 
+const deserializeModelResult = require("./utils/deserializeModelResult");
+
 fetch("/model?name=mpg")
   .then(response => response.json())
   .then(responseJson => {
-    const { mean, variance, weights, r2, msePlotImageUrl } = responseJson;
+    const {
+      mean,
+      variance,
+      weights,
+      r2,
+      msePlotImageUrl
+    } = deserializeModelResult(responseJson);
 
     const accuracyElement = document.querySelector("#mpg-accuracy");
     accuracyElement.innerHTML = `${(r2 * 100).toFixed(2)}`;
@@ -111,17 +119,31 @@ fetch("/model?name=mpg")
     const calculateMpg = () => {
       const predictions = predictLinear(
         tf.tensor([inputs.map(input => Number(input.value))]),
-        tf.tensor(weights),
-        tf.tensor(mean),
-        tf.tensor(variance)
+        weights,
+        mean,
+        variance
       );
-      resultElement.innerHTML = `${predictions.arraySync().toFixed(2)}`;
+      resultElement.innerHTML = `${Number(predictions.arraySync()[0]).toFixed(
+        2
+      )}`;
     };
 
     inputs.forEach(input => input.addEventListener("change", calculateMpg));
   });
 
-},{"./algorithms/linear-regression":1,"@tensorflow/tfjs":9}],3:[function(require,module,exports){
+},{"./algorithms/linear-regression":1,"./utils/deserializeModelResult":3,"@tensorflow/tfjs":10}],3:[function(require,module,exports){
+const tf = require("@tensorflow/tfjs");
+
+const deserializeModelResult = result => ({
+  ...result,
+  mean: tf.tensor(result.mean),
+  variance: tf.tensor(result.variance),
+  weights: tf.tensor(result.weights)
+});
+
+module.exports = deserializeModelResult;
+
+},{"@tensorflow/tfjs":10}],4:[function(require,module,exports){
 /**
  * @license
  * Copyright 2020 Google LLC. All Rights Reserved.
@@ -4355,7 +4377,7 @@ exports.shared = shared;
 exports.version_cpu = version;
 
 
-},{"@tensorflow/tfjs-core":6,"seedrandom":15}],4:[function(require,module,exports){
+},{"@tensorflow/tfjs-core":7,"seedrandom":16}],5:[function(require,module,exports){
 /**
  * @license
  * Copyright 2020 Google LLC. All Rights Reserved.
@@ -13667,7 +13689,7 @@ exports.webgl = webgl;
 exports.webgl_util = webgl_util;
 
 
-},{"@tensorflow/tfjs-core":6}],5:[function(require,module,exports){
+},{"@tensorflow/tfjs-core":7}],6:[function(require,module,exports){
 (function (Buffer){
 /**
  * @license
@@ -20762,7 +20784,7 @@ exports.version_converter = version;
 
 
 }).call(this,require("buffer").Buffer)
-},{"@tensorflow/tfjs-core":6,"buffer":12}],6:[function(require,module,exports){
+},{"@tensorflow/tfjs-core":7,"buffer":13}],7:[function(require,module,exports){
 (function (process,global,Buffer,__argument0,__argument1,__argument2,__argument3,setImmediate){
 /**
  * @license
@@ -53338,7 +53360,7 @@ exports.zerosLike = zerosLike;
 
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],require("timers").setImmediate)
-},{"_process":14,"buffer":12,"crypto":11,"node-fetch":11,"timers":23,"util":11}],7:[function(require,module,exports){
+},{"_process":15,"buffer":13,"crypto":12,"node-fetch":12,"timers":24,"util":12}],8:[function(require,module,exports){
 (function (global,Buffer){
 /**
  * @license
@@ -58752,7 +58774,7 @@ exports.zip = zip;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"@tensorflow/tfjs-core":6,"buffer":12,"crypto":11,"fs":11,"string_decoder":11}],8:[function(require,module,exports){
+},{"@tensorflow/tfjs-core":7,"buffer":13,"crypto":12,"fs":12,"string_decoder":12}],9:[function(require,module,exports){
 /**
  * @license
  * Copyright 2020 Google LLC. All Rights Reserved.
@@ -79318,7 +79340,7 @@ exports.sequential = sequential;
 exports.version_layers = version;
 
 
-},{"@tensorflow/tfjs-core":6}],9:[function(require,module,exports){
+},{"@tensorflow/tfjs-core":7}],10:[function(require,module,exports){
 /**
  * @license
  * Copyright 2020 Google LLC. All Rights Reserved.
@@ -79404,7 +79426,7 @@ exports.data = tfjsData;
 exports.version = version$1;
 
 
-},{"@tensorflow/tfjs-backend-cpu":3,"@tensorflow/tfjs-backend-webgl":4,"@tensorflow/tfjs-converter":5,"@tensorflow/tfjs-core":6,"@tensorflow/tfjs-data":7,"@tensorflow/tfjs-layers":8}],10:[function(require,module,exports){
+},{"@tensorflow/tfjs-backend-cpu":4,"@tensorflow/tfjs-backend-webgl":5,"@tensorflow/tfjs-converter":6,"@tensorflow/tfjs-core":7,"@tensorflow/tfjs-data":8,"@tensorflow/tfjs-layers":9}],11:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -79558,9 +79580,9 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],11:[function(require,module,exports){
-
 },{}],12:[function(require,module,exports){
+
+},{}],13:[function(require,module,exports){
 (function (Buffer){
 /*!
  * The buffer module from node.js, for the browser.
@@ -81341,7 +81363,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"base64-js":10,"buffer":12,"ieee754":13}],13:[function(require,module,exports){
+},{"base64-js":11,"buffer":13,"ieee754":14}],14:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -81427,7 +81449,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -81613,7 +81635,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // A library of seedable RNGs implemented in Javascript.
 //
 // Usage:
@@ -81675,7 +81697,7 @@ sr.tychei = tychei;
 
 module.exports = sr;
 
-},{"./lib/alea":16,"./lib/tychei":17,"./lib/xor128":18,"./lib/xor4096":19,"./lib/xorshift7":20,"./lib/xorwow":21,"./seedrandom":22}],16:[function(require,module,exports){
+},{"./lib/alea":17,"./lib/tychei":18,"./lib/xor128":19,"./lib/xor4096":20,"./lib/xorshift7":21,"./lib/xorwow":22,"./seedrandom":23}],17:[function(require,module,exports){
 // A port of an algorithm by Johannes Baagøe <baagoe@baagoe.com>, 2010
 // http://baagoe.com/en/RandomMusings/javascript/
 // https://github.com/nquinlan/better-random-numbers-for-javascript-mirror
@@ -81791,7 +81813,7 @@ if (module && module.exports) {
 
 
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // A Javascript implementaion of the "Tyche-i" prng algorithm by
 // Samuel Neves and Filipe Araujo.
 // See https://eden.dei.uc.pt/~sneves/pubs/2011-snfa2.pdf
@@ -81896,7 +81918,7 @@ if (module && module.exports) {
 
 
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 // A Javascript implementaion of the "xor128" prng algorithm by
 // George Marsaglia.  See http://www.jstatsoft.org/v08/i14/paper
 
@@ -81979,7 +82001,7 @@ if (module && module.exports) {
 
 
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 // A Javascript implementaion of Richard Brent's Xorgens xor4096 algorithm.
 //
 // This fast non-cryptographic random number generator is designed for
@@ -82127,7 +82149,7 @@ if (module && module.exports) {
   (typeof define) == 'function' && define   // present with an AMD loader
 );
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 // A Javascript implementaion of the "xorshift7" algorithm by
 // François Panneton and Pierre L'ecuyer:
 // "On the Xorgshift Random Number Generators"
@@ -82226,7 +82248,7 @@ if (module && module.exports) {
 );
 
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 // A Javascript implementaion of the "xorwow" prng algorithm by
 // George Marsaglia.  See http://www.jstatsoft.org/v08/i14/paper
 
@@ -82314,7 +82336,7 @@ if (module && module.exports) {
 
 
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /*
 Copyright 2014 David Bau.
 
@@ -82563,7 +82585,7 @@ if ((typeof module) == 'object' && module.exports) {
   Math    // math: package containing random, pow, and seedrandom
 );
 
-},{"crypto":11}],23:[function(require,module,exports){
+},{"crypto":12}],24:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -82642,4 +82664,4 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":14,"timers":23}]},{},[2]);
+},{"process/browser.js":15,"timers":24}]},{},[2]);
