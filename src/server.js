@@ -2,11 +2,15 @@ const express = require("express");
 
 const serializeModelResult = require("./utils/serializeModelResult");
 const mpgModel = require("./models/mpg");
+const emissionsModel = require("./models/passedemissions");
 
 // Run models and serialize results.
 
+const serializeModel = model => serializeModelResult(model.run());
+
 const serializedModelResults = {
-  mpg: serializeModelResult(mpgModel.run())
+  mpg: serializeModel(mpgModel),
+  emissions: serializeModel(emissionsModel)
 };
 
 // Set up and start the web server.
