@@ -25,7 +25,7 @@ fetch("/model?name=mpg")
         tf.tensor(mean),
         tf.tensor(variance)
       );
-      resultElement.innerHTML = `${predictions.arraySync()[0].toFixed(2)}`;
+      resultElement.innerHTML = `${predictions.arraySync().toFixed(2)}`;
     };
 
     inputs.forEach(input => input.addEventListener("change", calculateMpg));
