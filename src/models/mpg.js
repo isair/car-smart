@@ -34,7 +34,7 @@ const run = () => {
 
   console.log("mpg r2 is", r2);
 
-  const timestamp = Date.now();
+  const msePlotImageName = `mpg-mse-${Date.now()}.png`;
 
   plot({
     x: mpg.mseHistory,
@@ -43,15 +43,15 @@ const run = () => {
   });
 
   rimraf("src/public/*.png", () => {
-    fs.rename("plot.png", `src/public/mpg-mse-${timestamp}.png`, () => {});
+    fs.rename("plot.png", `src/public/${msePlotImageName}`, () => {});
   });
 
   return {
-    timestamp,
     mean,
     variance,
     weights: mpg.weights,
-    r2: mpg.r2
+    r2: mpg.r2,
+    msePlotImageUrl: msePlotImageName
   };
 };
 

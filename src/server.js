@@ -12,15 +12,18 @@ app.get("/", (request, response) => {
 });
 
 app.get("/model", (request, response) => {
-  response.json({
-    mean: mpg.mean.arraySync(),
-    variance: mpg.variance.arraySync(),
-    mpg: {
-      timestamp: mpg.timestamp,
-      weights: mpg.weights.arraySync(),
-      r2: mpg.r2
-    }
-  });
+  switch (request.query.name) {
+    case "mpg":
+    default:
+      response.json({
+        mean: mpg.mean.arraySync(),
+        variance: mpg.variance.arraySync(),
+        weights: mpg.weights.arraySync(),
+        r2: mpg.r2,
+        msePlotImageUrl: mpg.msePlotImageUrl,
+      });
+      break;
+  }
 });
 
 const listener = app.listen(process.env.PORT, () => {

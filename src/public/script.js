@@ -1,13 +1,13 @@
-fetch("/model")
+fetch("/model?name=mpg")
   .then(response => response.json())
   .then(responseJson => {
-    const { mean, variance, mpg } = responseJson;
+    const { mean, variance, weights, r2, msePlotImageUrl } = responseJson;
 
     const accuracyElement = document.querySelector("#mpg-accuracy");
-    accuracyElement.innerHTML = `${(mpg.r2 * 100).toFixed(2)}`;
+    accuracyElement.innerHTML = `${(r2 * 100).toFixed(2)}`;
 
     const msePlotElement = document.querySelector("#mpg-mse-plot");
-    msePlotElement.src = `mpg-mse-${mpg.timestamp}.png`;
+    msePlotElement.src = msePlotImageUrl;
 
     const inputs = ["#displacement", "#horsepower", "#weight"].map(query =>
       document.querySelector(query)
@@ -15,7 +15,7 @@ fetch("/model")
     const resultElement = document.querySelector("#result");
 
     const calculateMpg = () => {
-      let result = mpg.weights.reduce(
+      let result = weights.reduce(
         (acc, weight, i) =>
           acc +
           weight *
