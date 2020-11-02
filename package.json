@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "browserify src/client.js -o src/public/bundle.js && node src/index.js"
+    "build": "browserify src/client.js -o src/public/bundle.js",
+    "start": "npm run build && node src/index.js"
   },
   "dependencies": {
     "express": "^4.17.1",

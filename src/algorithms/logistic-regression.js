@@ -64,27 +64,25 @@ const train = (
   return { weights, mseHistory };
 };
 
-const test = (weights, testFeatures, testLabels) => {
-  const predictions = testFeatures.matMul(weights);
-  const residual = testLabels
-    .sub(predictions)
-    .pow(2)
-    .sum()
-    .arraySync();
-  const total = testLabels
-    .sub(testLabels.mean())
-    .pow(2)
-    .sum()
-    .arraySync();
-  return 1 - residual / total;
-};
-
 const predict = (observations, weights, mean, variance) =>
   tf
     .ones([observations.shape[0], 1])
     .concat(observations.sub(mean).div(variance.pow(0.5)), 1)
     .matMul(weights)
     .sigmoid();
+
+const test = (weights, testFeatures, testLabels, mean, variance) => {
+  const predictions = testFeatures
+    .matMul(weights)
+    .sigmoid()
+    .round();
+  const incorrect = predictions
+    .sub(testLabels)
+    .abs()
+    .sum()
+    .arraySync();
+  return (predictions.shape[0] - incorrect) / predictions.shape[0];
+};
 
 module.exports = {
   train,

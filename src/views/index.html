@@ -30,7 +30,10 @@
     <main>
       <h2>Oh hi,</h2>
 
-      <p>Enter car details below to calculate miles per gallon</p>
+      <p>
+        Enter car details below to calculate miles per gallon and whether it'll
+        pass an emissions test.
+      </p>
 
       <form>
         <label>
@@ -53,7 +56,8 @@
       </form>
 
       <div id="result-container">
-        <p>MPG: <span id="result"></span></p>
+        <p>MPG: <span id="mpg-result"></span></p>
+        <p>Emissions Pass Chance: <span id="emissions-result"></span></p>
       </div>
 
       <br />
@@ -62,12 +66,22 @@
         Stats for Nerds
       </h2>
 
+      <h3>
+        MPG
+      </h3>
+
       <p>Accuracy (r2 as percentage): <span id="mpg-accuracy"></span>%</p>
 
       <p>
         MSE history:
       </p>
       <img id="mpg-mse-plot" src="mse.png" />
+
+      <h3>
+        Emissions
+      </h3>
+
+      <p>Accuracy: <span id="emissions-accuracy"></span>%</p>
     </main>
 
     <footer>Made with <a href="https://glitch.com">Glitch</a>!</footer>
