@@ -14,12 +14,12 @@ fetch("/model?name=mpg")
       mean,
       variance,
       weights,
-      r2,
+      accuracy,
       plotImageUrl
     } = deserializeModelResult(responseJson);
 
     const accuracyElement = document.querySelector("#mpg-accuracy");
-    accuracyElement.innerHTML = `${(r2 * 100).toFixed(2)}`;
+    accuracyElement.innerHTML = `${(accuracy * 100).toFixed(2)}`;
 
     const msePlotElement = document.querySelector("#mpg-mse-plot");
     msePlotElement.src = plotImageUrl;
@@ -51,12 +51,12 @@ fetch("/model?name=emissions")
       mean,
       variance,
       weights,
-      r2,
+      accuracy,
       plotImageUrl
     } = deserializeModelResult(responseJson);
 
-    //     const accuracyElement = document.querySelector("#mpg-accuracy");
-    //     accuracyElement.innerHTML = `${(r2 * 100).toFixed(2)}`;
+    const accuracyElement = document.querySelector("#emissions-accuracy");
+    accuracyElement.innerHTML = `${(accuracy * 100).toFixed(2)}`;
 
     //     const msePlotElement = document.querySelector("#mpg-mse-plot");
     //     msePlotElement.src = plotImageUrl;

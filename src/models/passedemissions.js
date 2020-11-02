@@ -4,7 +4,7 @@ const plot = require("node-remote-plot");
 const fs = require("fs");
 const rimraf = require("rimraf");
 
-const { train, test, predict } = require("../algorithms/logistic-regression");
+const { train, test } = require("../algorithms/logistic-regression");
 
 const run = () => {
   let { features, labels, testFeatures, testLabels, mean, variance } = loadCsv(
@@ -28,20 +28,15 @@ const run = () => {
     batchSize: 50
   });
 
-  const predictions = predict(
-    tf.tensor([[97, 88, 1.065]]),
-    weights,
-    mean,
-    variance
-  );
+  const accuracy = test(weights, testFeatures, testLabels, mean, variance);
 
-  predictions.print();
+  console.log("passedemissions accuracy is", accuracy);
 
   return {
     mean,
     variance,
     weights,
-    r2: 0,
+    accuracy,
     plotImageUrl: ""
   };
 };

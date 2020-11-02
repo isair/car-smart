@@ -25,9 +25,9 @@ const run = () => {
     batchSize: 10
   });
 
-  const r2 = test(weights, testFeatures, testLabels);
+  const accuracy = test(weights, testFeatures, testLabels);
 
-  console.log("mpg r2 is", r2);
+  console.log("mpg r2 is", accuracy);
 
   plot({
     x: mseHistory,
@@ -45,7 +45,7 @@ const run = () => {
     mean,
     variance,
     weights,
-    r2,
+    accuracy,
     plotImageUrl: msePlotImageName
   };
 };
