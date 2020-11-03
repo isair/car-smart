@@ -64,18 +64,43 @@ const train = (
   return { weights, mseHistory };
 };
 
-const predict = (observations, weights, mean, variance) =>
-  tf
-    .ones([observations.shape[0], 1])
-    .concat(observations.sub(mean).div(variance.pow(0.5)), 1)
-    .matMul(weights)
-    .sigmoid();
-
-const test = (weights, testFeatures, testLabels, mean, variance) => {
-  const predictions = testFeatures
+const predict = (
+  observations,
+  weights,
+  mean,
+  variance,
+  observationsProcessed = false,
+  decisionBoundary = 0.5
+) => {
+  const observationsToUse = observationsProcessed
+    ? observations
+    : tf
+        .ones([observations.shape[0], 1])
+        .concat(observations.sub(mean).div(variance.pow(0.5)), 1);
+  return observationsToUse
     .matMul(weights)
     .sigmoid()
-    .round();
+    .greater(decisionBoundary)
+    .cast("float32");
+};
+
+const test = (
+  weights,
+  testFeatures,
+  testLabels,
+  mean,
+  variance,
+  testFeaturesProcessed = true,
+  decisionBoundary = 0.5
+) => {
+  const predictions = predict(
+    testFeatures,
+    weights,
+    mean,
+    variance,
+    testFeaturesProcessed,
+    decisionBoundary
+  );
   const incorrect = predictions
     .sub(testLabels)
     .abs()
