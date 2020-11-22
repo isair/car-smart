@@ -1,5 +1,5 @@
-require("@tensorflow/tfjs-node");
+require('@tensorflow/tfjs-node');
 
-const server = require("./server");
+const server = require('./server');
 
 server.start();

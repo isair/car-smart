@@ -1,9 +1,9 @@
-const tf = require("@tensorflow/tfjs");
+const tf = require('@tensorflow/tfjs');
 
 const gradientDescent = (
   features,
   labels,
-  { learningRate = 0.1, weights = tf.ones([features.shape[1], 1]) } = {}
+  { learningRate = 0.1, weights = tf.ones([features.shape[1], 1]) } = {},
 ) => {
   const slopes = features
     .transpose()
@@ -11,7 +11,7 @@ const gradientDescent = (
       features
         .matMul(weights)
         .sigmoid()
-        .sub(labels)
+        .sub(labels),
     )
     .div(features.shape[0]);
   return weights.sub(slopes.mul(learningRate));
@@ -20,14 +20,16 @@ const gradientDescent = (
 const train = (
   features,
   labels,
-  { learningRate, iterations = 1000, batchSize = 10, initialWeights } = {}
+  {
+    learningRate, iterations = 1000, batchSize = 10, initialWeights,
+  } = {},
 ) => {
   let weights = initialWeights;
 
   let activeLearningRate = learningRate;
 
-  const mseHistory = [];
-  let lastMse;
+  const costHistory = [];
+  let lastCost;
 
   const batchCount = features.shape[0] / batchSize;
 
@@ -40,28 +42,29 @@ const train = (
         labels.slice(batchStart, [currentBatchSize, -1]),
         {
           activeLearningRate,
-          weights
-        }
+          weights,
+        },
       );
     }
 
-    const mse = features
-      .matMul(weights)
-      .sub(labels)
-      .pow(2)
-      .sum()
+    const guesses = features.matMul(weights).sigmoid();
+    const termOne = labels.transpose().matMul(guesses.log());
+    const termTwo = labels.mul(-1).add(1).transpose().matMul(guesses.mul(-1).add(1).log());
+    const cost = termOne
+      .add(termTwo)
       .div(features.shape[0])
-      .arraySync();
-    mseHistory.push(mse);
+      .mul(-1)
+      .arraySync()[0][0]; // cross entropy
+    costHistory.push(cost);
 
-    if (lastMse && mse) {
-      if (mse === lastMse) break;
-      activeLearningRate *= mse > lastMse ? 0.5 : 1.05;
+    if (lastCost && cost) {
+      if (cost === lastCost) break;
+      activeLearningRate *= cost > lastCost ? 0.5 : 1.05;
     }
-    lastMse = mse;
+    lastCost = cost;
   }
 
-  return { weights, mseHistory };
+  return { weights, costHistory };
 };
 
 const predict = (
@@ -70,18 +73,18 @@ const predict = (
   mean,
   variance,
   observationsProcessed = false,
-  decisionBoundary = 0.5
+  decisionBoundary = 0.5,
 ) => {
   const observationsToUse = observationsProcessed
     ? observations
     : tf
-        .ones([observations.shape[0], 1])
-        .concat(observations.sub(mean).div(variance.pow(0.5)), 1);
+      .ones([observations.shape[0], 1])
+      .concat(observations.sub(mean).div(variance.pow(0.5)), 1);
   return observationsToUse
     .matMul(weights)
     .sigmoid()
     .greater(decisionBoundary)
-    .cast("float32");
+    .cast('float32');
 };
 
 const test = (
@@ -91,7 +94,7 @@ const test = (
   mean,
   variance,
   testFeaturesProcessed = true,
-  decisionBoundary = 0.5
+  decisionBoundary = 0.5,
 ) => {
   const predictions = predict(
     testFeatures,
@@ -99,7 +102,7 @@ const test = (
     mean,
     variance,
     testFeaturesProcessed,
-    decisionBoundary
+    decisionBoundary,
   );
   const incorrect = predictions
     .sub(testLabels)
@@ -112,5 +115,5 @@ const test = (
 module.exports = {
   train,
   test,
-  predict
+  predict,
 };

@@ -1,46 +1,57 @@
-const tf = require("@tensorflow/tfjs");
-const loadCsv = require("tensorflow-load-csv");
-const plot = require("node-remote-plot");
-const fs = require("fs");
-const rimraf = require("rimraf");
+const loadCsv = require('tensorflow-load-csv');
+const plot = require('node-remote-plot');
+const rimraf = require('rimraf');
 
-const { train, test } = require("../algorithms/logistic-regression");
+const { train, test } = require('../algorithms/logistic-regression');
 
 const run = () => {
-  let { features, labels, testFeatures, testLabels, mean, variance } = loadCsv(
-    "./data/cars.csv",
+  const {
+    features, labels, testFeatures, testLabels, mean, variance,
+  } = loadCsv(
+    './data/cars.csv',
     {
-      featureColumns: ["displacement", "horsepower", "weight"],
-      labelColumns: ["passedemissions"],
+      featureColumns: ['displacement', 'horsepower', 'weight'],
+      labelColumns: ['passedemissions'],
       mappings: {
-        passedemissions: value => (value === "TRUE" ? 1 : 0)
+        passedemissions: (value) => (value === 'TRUE' ? 1 : 0),
       },
       shuffle: true,
       splitTest: 50,
       prependOnes: true,
-      standardise: true
-    }
+      standardise: true,
+    },
   );
 
-  const { weights } = train(features, labels, {
+  const { weights, costHistory } = train(features, labels, {
     learningRate: 0.5,
     iterations: 100,
-    batchSize: 50
+    batchSize: 50,
   });
 
   const accuracy = test(weights, testFeatures, testLabels, mean, variance);
 
-  console.log("passedemissions accuracy is", accuracy);
+  console.log('passedemissions accuracy is', accuracy);
+
+  const plotImageName = `passedemissions/cost-${Date.now()}`;
+
+  rimraf('src/public/passedemissions/*.png', () => {
+    plot({
+      x: costHistory,
+      xLabel: 'Iteration #',
+      yLabel: 'Cross Entropy',
+      name: `src/public/${plotImageName}`,
+    });
+  });
 
   return {
     mean,
     variance,
     weights,
     accuracy,
-    plotImageUrl: ""
+    plotImageUrl: `${plotImageName}.png`,
   };
 };
 
 module.exports = {
-  run
+  run,
 };
