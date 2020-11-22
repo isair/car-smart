@@ -1,3 +1,6 @@
 node_modules/
 *.png
 src/public/bundle*
+shrinkwrap.yaml
+yarn.lock
+package-lock.json
