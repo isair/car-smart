@@ -1,4 +1,4 @@
 module.exports = {
   dev: false,
-  port: 80,
+  port: process.env.PORT || 80,
 };
