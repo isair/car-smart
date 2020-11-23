@@ -36,7 +36,7 @@ fetch('/model?name=mpg')
       );
       resultElement.innerHTML = `${Number(predictions.arraySync()[0]).toFixed(
         2,
-      )}`;
+      )} miles per gallon`;
     };
 
     inputs.forEach((input) => input.addEventListener('change', calculateMpg));
@@ -69,9 +69,9 @@ fetch('/model?name=emissions')
         mean,
         variance,
       );
-      resultElement.innerHTML = `${(
-        Number(predictions.arraySync()[0]) * 100
-      ).toFixed()}%`;
+      resultElement.innerHTML = Number(predictions.arraySync()[0]) === 1
+        ? 'Should pass emissions check'
+        : 'Should fail emissions check';
     };
 
     inputs.forEach((input) => input.addEventListener('change', calculateEmissions));

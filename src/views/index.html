@@ -1,21 +1,24 @@
-<!-- This is a static file -->
-<!-- served from your routes in server.js -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="A cool thing made with Glitch" />
+    <meta name="description" content="Car Analysis with Machine Learning" />
 
-    <title>Car Analysis</title>
+    <title>Car Smart</title>
 
     <link
       id="favicon"
       rel="icon"
-      href="https://glitch.com/edit/favicon-app.ico"
+      href="/favicon.png"
       type="image/x-icon"
     />
+    <!-- import material design lite -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-red.min.css" />
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
     <!-- import the webpage's stylesheet -->
     <link rel="stylesheet" href="/style.css" />
 
@@ -23,77 +26,82 @@
     <script src="/bundle.js" defer></script>
   </head>
   <body>
-    <header>
-      <h1>Car Analysis with Machine Learning</h1>
-    </header>
+    <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout mdl-color--grey-100">
+      <div class="demo-ribbon"></div>
+      <main class="demo-main mdl-layout__content">
+        <div class="demo-container mdl-grid">
+          <div class="mdl-cell mdl-cell--2-col mdl-cell--hide-tablet mdl-cell--hide-phone"></div>
+          <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--8-col">
+            <h2>Car analysis</h2>
 
-    <main>
-      <h2>Oh hi,</h2>
+            <p>
+              Enter car details below to calculate miles per gallon and whether it'll pass an emissions test or not.
+            </p>
 
-      <p>
-        Enter car details below to calculate miles per gallon and whether it'll
-        pass an emissions test.
-      </p>
+            <form action="#">
+              <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="horsepower" maxlength="10">
+                <label class="mdl-textfield__label" for="sample2">Horsepower (hp)</label>
+                <span class="mdl-textfield__error">Input is not a number!</span>
+              </div>
+              <br />
+              <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="weight" maxlength="10">
+                <label class="mdl-textfield__label" for="sample2">Weight (t)</label>
+                <span class="mdl-textfield__error">Input is not a number!</span>
+              </div>
+              <br />
+              <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="displacement" maxlength="10">
+                <label class="mdl-textfield__label" for="sample2">Engine displacement</label>
+                <span class="mdl-textfield__error">Input is not a number!</span>
+              </div>
+            </form>
 
-      <form>
-        <label>
-          Horsepower (hp)
-          <input id="horsepower" type="text" maxlength="100" placeholder="0" />
-        </label>
-        <label>
-          Weight (t)
-          <input id="weight" type="text" maxlength="100" placeholder="0" />
-        </label>
-        <label>
-          Engine Displacement
-          <input
-            id="displacement"
-            type="text"
-            maxlength="100"
-            placeholder="0"
-          />
-        </label>
-      </form>
+            <br />
 
-      <div id="result-container">
-        <p>MPG: <span id="mpg-result"></span></p>
-        <p>Emissions Pass Chance: <span id="emissions-result"></span></p>
-      </div>
+            <div>
+              <span class="mdl-chip mdl-chip--contact">
+                <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white"><em class="mdl-chip__contact material-icons">fast_forward</em></span>
+                <span class="mdl-chip__text" id="mpg-result">?</span>
+              </span>
+              <br />
+              <span class="mdl-chip mdl-chip--contact">
+                <span class="mdl-chip__contact mdl-color--teal mdl-color-text--white"><em class="mdl-chip__contact material-icons">smoking_rooms</em></span>
+                <span class="mdl-chip__text" id="emissions-result">?</span>
+              </span>
+            </div>
 
-      <br />
+            <br />
 
-      <h2>
-        Stats for Nerds
-      </h2>
+            <h2>
+              Stats for nerds
+            </h2>
 
-      <h3>
-        MPG
-      </h3>
+            <h3>
+              Miles per gallon
+            </h3>
 
-      <p>Accuracy (r2 as percentage): <span id="mpg-accuracy"></span>%</p>
+            <p>Accuracy - r2 as percentage: <span id="mpg-accuracy"></span>%</p>
 
-      <p>
-        Cost history - MSE:
-      </p>
-      <img id="mpg-cost-plot" src="mpg-cost.png" />
+            <p>
+              Cost history - mean squared error:
+            </p>
+            <img id="mpg-cost-plot" />
 
-      <h3>
-        Emissions
-      </h3>
+            <h3>
+              Emissions
+            </h3>
 
-      <p>Accuracy: <span id="emissions-accuracy"></span>%</p>
+            <p>Accuracy: <span id="emissions-accuracy"></span>%</p>
 
-      <p>
-        Cost history - Cross Entropy:
-      </p>
-      <img id="emissions-cost-plot" src="emissions-cost.png" />
-    </main>
-
-    <footer>Made with <a href="https://glitch.com">Glitch</a>!</footer>
-
-    <!-- include the Glitch button to show what the webpage is about and
-          to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:2em;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js" defer></script>
+            <p>
+              Cost history - cross entropy:
+            </p>
+            <img id="emissions-cost-plot" />
+          </div>
+        </div>
+      </main>
+    </div>
   </body>
 </html>

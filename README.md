@@ -2,4 +2,4 @@
 
 An ML web app that guesses MPG of a car.
 
-https://car-smart.glitch.me
+https://car-smart.herokuapp.com/
