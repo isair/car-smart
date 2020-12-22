@@ -3,7 +3,7 @@ const tf = require('@tensorflow/tfjs');
 const gradientDescent = (
   features,
   labels,
-  { learningRate = 0.1, weights = tf.ones([features.shape[1], 1]) } = {},
+  { learningRate = 0.1, weights = tf.ones([features.shape[1], labels.shape[1]]) } = {},
 ) => {
   const slopes = features
     .transpose()
